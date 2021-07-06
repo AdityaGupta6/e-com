@@ -1,0 +1,112 @@
+{% extends 'shop/basic.html' %}
+
+
+{% block title%}My shop- checkout{% endblock%}
+{% block body%}
+
+<div class="container">
+    <div class="col my-3">
+
+        <h2 class="my-2">Step1 - My Awesome cart Express checkout -Review your cart item</h2>
+        <div class="items">
+            <ul class="list-group"id="items">
+<li class="list-group-item d-flex justify-content-between align-items-center">Product
+        <span >Quantity</span>
+        <span >Price</span>
+                    </li>
+
+            </ul>
+        </div>
+    </div>
+    <div class="col my-4">
+
+        <h2>Step1 - Enter Address and other details</h2>
+        <form method="POST" action="/shop/checkout" >{% csrf_token %}
+            <input type="hidden" name="itemsJson" id="itemsJson">
+            <div class="form-row my-3">
+                <div class="form-group col-md-6">
+                    <label for="inputName">Name</label>
+                    <input name="name" id="name" type="name" class="form-control" id="inputName" placeholder="Enter your name">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputEmail4">Email</label>
+                    <input name="email" id="email" type="email" class="form-control" id="inputEmail4" placeholder=" Enter your Email">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputAddress">Address</label>
+                <input name="address" id="address" type="text" class="form-control" id="inputAddress" placeholder="Enter your address">
+            </div>
+            <div class="form-group">
+                <label for="inputAddress2">Locality</label>
+                <input name="locality" id="locality" type="text" class="form-control" id="inputAddress2" placeholder="Enter your locality ">
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputCity">City</label>
+                    <input name="city" id="city" type="text" class="form-control" id="inputCity">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputState">State</label>
+                    <input  name="state" id="state" type="text" class="form-control" id="inputState" placeholder="Enter your state">
+
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="inputZip">Zip</label>
+                    <input name="zip" id="zip" type="text" class="form-control" id="inputZip">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputPhone">Phone</label>
+                <input name="phone" id="phone" type="tel" class="form-control" id="inputPhone" placeholder="Enter your phone number">
+
+            </div>
+            <button type="submit" class="btn btn-primary">Place Order</button>
+        </form>
+    </div>
+
+</div>
+{% endblock%}
+{% block js%}
+
+<script>
+    if (localStorage.getItem('cart') === null) {
+        var cart = {}
+    }
+    else {
+        cart = JSON.parse(localStorage.getItem('cart'))
+    }
+
+    if ($.isEmptyObject(cart)) {
+myStr="<h5 class='my-3'><b>Your cart is empty .Please add some item.</b></h5>"
+$('#items').append(myStr)
+{% if thank %}
+
+alert("Your cart is Empty .Please add Some items")
+document.location='/shop'
+{%endif%}
+    }
+    else {
+        for (item in cart) {
+            let qty = cart[item][0]
+            let name = cart[item][1]
+            let itemPrice = cart[item][2]*qty
+
+            mystr = `<li ' class="list-group-item d-flex justify-content-between align-items-center">${name}
+        <span class="my-2 pill">${qty}</span>
+        <span class="badge badge-primary ">${itemPrice}</span>
+                    </li>`
+            $('#items').append(mystr);
+        }
+        $('#itemsJson').val(JSON.stringify(cart))
+{% if thank %}
+localStorage.clear();
+document.location='/shop'
+    alert(`Your item has successfully ordered.Your  is {{id}}.Use it to track your order`)
+    
+    {%endif%}
+}
+
+</script>
+
+{% endblock%}
